@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+plot(1:10)
+```
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(lubridate)
+```
+
+```{r}
+read_xlsx("data/DNR_data/IowaDNR_2018_Data_Merged.xlsx")
+```
+
+Clean up names
+
+```{r}
+dnr.2018 <- read_xlsx("data/DNR_data/IowaDNR_2018_Data_Merged.xlsx") %>%
+  janitor::clean_names() %>%
+  filter(!is.na(collected_date))
+```
+
+Check for missing dates
+
+```{r}
+dnr.2018 %>% 
+  mutate(collected_year = year(collected_date)) %>%
+  select(collected_date, collected_year) %>%
+  count(year(collected_date))
+```
+
+# One NA
+
+What is it? 
+```{r}
+dnr.2018 %>%
+  filter(!is.na(collected_date))
+```
+
