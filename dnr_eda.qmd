@@ -2,6 +2,9 @@
 title: "Untitled"
 format: html
 editor: visual
+execute: 
+  messages: false
+  warning: false
 ---
 
 This is some plain text. Whatever.
@@ -16,7 +19,6 @@ library(readxl)
 library(lubridate)
 ```
 
-
 ```{r}
 dnr.2018 <- read_xlsx("data/DNR_data/IowaDNR_2018_Data_Merged.xlsx") %>%
   janitor::clean_names() %>% 
@@ -27,7 +29,6 @@ dnr.2018 <- read_xlsx("data/DNR_data/IowaDNR_2018_Data_Merged.xlsx") %>%
     "safe"
   )) 
 ```
-
 
 ```{r}
 dnr.2018 %>% 
@@ -52,4 +53,3 @@ dnr.2018 %>%
     panel.grid.major.y = element_blank()
   )
 ```
-
