@@ -7,18 +7,14 @@ execute:
   warning: false
 ---
 
-This is some plain text. Whatever.
-
-```{r}
-plot(1:10)
-```
-
 ```{r}
 library(tidyverse)
 library(readxl)
 library(lubridate)
+library(janitor)
 ```
 
+#2018
 ```{r}
 dnr.2018 <- read_xlsx("data/DNR_data/IowaDNR_2018_Data_Merged.xlsx") %>%
   janitor::clean_names() %>% 
@@ -53,3 +49,101 @@ dnr.2018 %>%
     panel.grid.major.y = element_blank()
   )
 ```
+```{r}
+dnr.2018 <- dnr.2018 %>% 
+  rename(
+    microcystin = microcystin_raw_value_ug_l,
+    tkp = tkp_mg_p_l,
+    tkn = tkn_mg_n_l,
+    x16s = x16s_r_rna_gene_copies_m_l,
+    mcy_a_m = microcystismcy_a_gene_copies_m_l,
+    mcy_a_p = planktothrixmcy_a_gene_copies_m_l,
+    mcy_a_a = aanabaenamcy_a_gene_copies_m_l
+  ) %>% 
+  select(any_of(colnames(dnr.2021)))
+```
+
+# 2021 
+combine with 2018
+```{r}
+dnr.2021 <- read_xlsx("data/DNR_data/IowaDNR_2021_Data_Merged.xlsx") %>%
+  janitor::clean_names() %>% 
+  filter(!is.na(collected_date)) %>%
+  rename(
+    mcy_a_m = am, 
+    mcy_a_p = ap, 
+    mcy_a_a = aa
+  ) %>%
+  mutate(
+    p_h = as.numeric(p_h), 
+    dissolved_oxygen_mg_l = as.numeric(dissolved_oxygen_mg_l)
+  )
+
+glimpse(dnr.2021)
+```
+
+```{r}
+dnr.2018 <- read_xlsx("data/DNR_data/IowaDNR_2018_Data_Merged.xlsx") %>%
+  janitor::clean_names() %>%
+  filter(!is.na(collected_date)) %>%
+  rename(
+    mcy_a_m = microcystismcy_a_gene_copies_m_l,
+    mcy_a_p = planktothrixmcy_a_gene_copies_m_l,
+    mcy_a_a = aanabaenamcy_a_gene_copies_m_l, 
+    tkp = tkp_mg_p_l, 
+    tkn = tkn_mg_n_l,
+    x16s = x16s_r_rna_gene_copies_m_l, 
+    microcystin = microcystin_raw_value_ug_l
+  ) %>%
+  select(any_of(colnames(dnr.2021)))
+```
+
+# 2019
+
+```{r}
+dnr.2019 <- read_xlsx("data/DNR_data/IowaDNR_2019_Data_Merged.xlsx") %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(collected_date)) %>% 
+  rename(
+    tkn = tkn_mg_n_l,
+    tkp = tkp_mg_p_l,
+    ortho_p = ortho_p_mg_p_l
+  ) %>%
+  select(any_of(colnames(dnr.2021)))
+```
+
+```{r}
+dnr.2019 %>% 
+  head()
+```
+
+
+# 2020 
+
+```{r}
+dnr.2020 <- read_xlsx("data/DNR_data/IowaDNR_2020_Data_Merged.xlsx") %>%
+  janitor::clean_names() %>% 
+  filter(!is.na(collected_date)) %>% 
+  rename(
+    tkp = tkp_mg_p_l,
+    tkn = tkn_mg_n_l, 
+    ortho_p = ortho_p_mg_p_l
+  ) %>% 
+  mutate(
+    across(c(ortho_p, tkn, tkp), ~ as.numeric(.))
+  ) %>% 
+  select(any_of(colnames(dnr.2021))) 
+```
+```{r}
+dnr.all <- bind_rows(
+  dnr.2018,
+  dnr.2019,
+  dnr.2020,
+  dnr.2021
+)
+```
+
+```{r}
+
+```
+
